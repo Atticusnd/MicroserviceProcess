@@ -1,19 +1,30 @@
-# Start with a Node.js base image that uses Node v13
-FROM node:13
+FROM node:12.19.0-alpine3.9 AS development
+
 WORKDIR /usr/src/app
 
-# Copy the package.json file to the container and install fresh node_modules
-COPY package*.json tsconfig*.json ./
-RUN npm install
+COPY package*.json ./
 
-# Copy the rest of the application source code to the container
-COPY src/ src/
+RUN npm install glob rimraf
 
-# Transpile typescript and bundle the project
+RUN npm install --only=development
+
+COPY . .
+
 RUN npm run build
 
-# Remove the original src directory (our new compiled source is in the `dist` folder)
-RUN rm -r src
+FROM node:12.19.0-alpine3.9 as production
 
-# Assign `npm run start:prod` as the default command to run when booting the container
-CMD ["npm", "run", "start:prod"]
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
+
+COPY --from=development /usr/src/app/dist ./dist
+
+CMD ["node", "dist/main"]
