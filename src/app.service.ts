@@ -24,7 +24,6 @@ export class AppService {
     const gamesToDiscount = await this.GameModel.find({
       releaseDate: { $gte: discountMaxDate, $lte: discountMinDate },
     }).exec();
-    console.log('entraaaa');
     console.log('To Delete', gamesToDelete);
     for await (const game of gamesToDelete) {
       await this.delete(game._id);
