@@ -8,13 +8,11 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 3003:3003
-    networks:
-      - nesjs-network
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
 networks:
-  nesjs-network:
+  default:
     external: true
     name: client_nesjs-network

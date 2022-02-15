@@ -1,11 +1,13 @@
-FROM node:12.19.0-alpine3.9 AS development
+FROM node:12.19.0-alpine3.9
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY . .
+
+ENV PORT=3003
 
 RUN npm install
 
-COPY . .
+EXPOSE $PORT
 
-CMD ["node", "run", "start"]
+ENTRYPOINT ["npm", "run", "start"]
